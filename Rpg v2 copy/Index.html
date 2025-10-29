@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rpg</title>
+</head>
+<body>
+
+  
+    <style>
+
+        .hp-container {
+          width: 200px;
+          height: 25px;
+          border: 2px solid #000;
+          background-color: #ddd;
+          margin-top: 5px;
+        }
+        
+        .hp-bar {
+          height: 100%;
+          background-color: green; /* sempre verde */
+          width: 100%; /* barra sempre cheia */
+          text-align: center;
+          color: white;
+          font-weight: bold;
+          line-height: 25px; /* centraliza o texto verticalmente */
+          box-sizing: border-box;
+        }
+        </style>
+        
+
+    <p>Bem Vindo (a) Ao meu primeiro mini-game !</p>
+    <button id="exp">Treinar</button>
+    <div id="levelUp" style="display:none; border:1px solid #000; padding:10px; margin-top:10px;">
+        <h3>Parabens ! voce subiu de nivel !</h3>
+        <p>Escolha um atributo para evoluir:</p>
+        <button class="atributo" data-attr="vitalidade">Vitalidade</button>
+        <button class="atributo" data-attr="forca">Força</button>
+        <button class="atributo" data-attr="agilidade">Agilidade</button>
+        <button class="atributo" data-attr="inteligencia">Inteligência</button>
+    </div>
+    <!-- Status do jogador -->
+<div id="status" style="border:1px solid #000; padding:10px; margin-top:10px;">
+
+    <!-- Barra de HP -->
+<div class="hp-container">
+    <div class="hp-bar" id="hpBar">10 / 10</div>
+  </div>
+
+    <h3>Status do Jogador</h3>
+    <p id="Nome">Nome:</p>
+    <p id="nivel">Nível: 1</p>
+    <p id="experiencia">XP: 0</p>
+    <p id="vitalidade">Vitalidade: 10</p>
+    <p id="forca">Força: 1</p>
+    <p id="agilidade">Agilidade: 1</p>
+    <p id="inteligencia">Inteligência: 1</p>
+</div>
+
+<!-- Aba de evolução (mantida do seu HTML) -->
+<div id="levelUp" style="display:none; border:1px solid #000; padding:10px; margin-top:10px;">
+    <h3>Parabens ! voce subiu de nivel !</h3>
+    <p>Escolha um atributo para evoluir:</p>
+    <button class="atributo" data-attr="vitalidade">Vitalidade</button>
+    <button class="atributo" data-attr="forca">Força</button>
+    <button class="atributo" data-attr="agilidade">Agilidade</button>
+    <button class="atributo" data-attr="inteligencia">Inteligência</button>
+
+
+</div>
+ 
+    <script src="Main.js"></script>
+</body>
+</html>

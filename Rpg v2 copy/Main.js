@@ -9,7 +9,7 @@ const jogador = {
     inteligencia: 1,
   },
 };
-const dificuldade = 2; // Medium Level 
+const dificuldade = 3; // Medium Level 
 
 
 

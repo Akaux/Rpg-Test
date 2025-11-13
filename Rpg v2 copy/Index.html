@@ -1,76 +1,251 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rpg</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPG - Mini Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; /* dark blue/gray */
+      --panel:#0b1220;
+      --accent:#8b5cf6; /* purple accent */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --success: linear-gradient(90deg,#16a34a,#22c55e);
+      --danger: linear-gradient(90deg,#ef4444,#f97316);
+      --hp-border:rgba(255,255,255,0.08);
+    }
+
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,0.08), transparent),
+                  radial-gradient(900px 400px at 90% 90%, rgba(59,130,246,0.03), transparent),
+                  var(--bg);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      gap:24px;
+      min-height:100vh;
+    }
+
+    .container{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:20px;
+      align-items:start;
+    }
+
+    .game {
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      padding:20px;
+      border-radius:14px;
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+    }
+
+    header h1{margin:0 0 8px 0; font-size:20px; font-weight:700; letter-spacing:0.4px}
+    header p{margin:0;color:var(--muted)}
+
+    .controls{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.06);
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      color:inherit;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .btn:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(8,12,20,0.6)}
+    .btn.primary{background:var(--accent); color:white; border:none; box-shadow:0 8px 30px rgba(139,92,246,0.18)}
+
+    /* Painel de status (lado direito) */
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      padding:18px;
+      border-radius:12px;
+      min-height:120px;
+    }
+
+    .hp-container{
+      width:100%;
+      height:28px;
+      background:var(--glass);
+      border-radius:8px;
+      padding:3px;
+      border:1px solid var(--hp-border);
+      overflow:hidden;
+      margin-bottom:12px;
+    }
+
+    .hp-bar{
+      height:100%;
+      background: var(--success);
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      font-size:13px;
+      transition:width .4s ease, background .3s ease;
+    }
+
+    .stat-list{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+    .stat-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+    .stat-item .name{color:var(--muted)}
+    .stat-item .value{font-weight:700}
+
+    /* Level up modal fallback panel */
+    .level-up{
+      margin-top:14px;
+      padding:12px;
+      border-radius:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+    }
+
+    .atributo{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;font-weight:700}
+    .atributo:hover{transform:translateY(-3px)}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+      .panel{order:-1}
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <main class="game">
+      <header>
+        <h1>Bem-vindo(a) ao meu mini-game!</h1>
+        <p>Treine para ganhar experiência e evoluir seus atributos.</p>
+      </header>
 
+      <div class="controls">
+        <button id="exp" class="btn primary">Treinar</button>
+        <button id="save" class="btn">Salvar</button>
+        <button id="load" class="btn">Carregar</button>
+      </div>
 
-    <style>
+      <section style="margin-top:18px">
+        <h2 style="margin:0 0 8px 0;font-size:16px">Histórico</h2>
+        <div style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);min-height:120px">
+          <p id="log" style="margin:0;color:var(--muted)">Nenhuma ação realizada ainda.</p>
+        </div>
+      </section>
 
-        .hp-container {
-          width: 200px;
-          height: 25px;
-          border: 2px solid #000;
-          background-color: #ddd;
-          margin-top: 5px;
-        }
-        
-        .hp-bar {
-          height: 100%;
-          background-color: green; /* sempre verde */
-          width: 100%; /* barra sempre cheia */
-          text-align: center;
-          color: white;
-          font-weight: bold;
-          line-height: 25px; /* centraliza o texto verticalmente */
-          box-sizing: border-box;
-        }
-        </style>
-        
+      <footer>
+        Dica: clique em "Treinar" para ganhar XP. Ao subir de nível, escolha um atributo para evoluir.
+      </footer>
+    </main>
 
-    <p>Bem Vindo (a) Ao meu primeiro mini-game !</p>
-    <button id="exp">Treinar</button>
-    <div id="levelUp" style="display:none; border:1px solid #000; padding:10px; margin-top:10px;">
-        <h3>Parabens ! voce subiu de nivel !</h3>
-        <p>Escolha um atributo para evoluir:</p>
-        <button class="atributo" data-attr="vitalidade">Vitalidade</button>
-        <button class="atributo" data-attr="forca">Força</button>
-        <button class="atributo" data-attr="agilidade">Agilidade</button>
-        <button class="atributo" data-attr="inteligencia">Inteligência</button>
-    </div>
-    <!-- Status do jogador -->
-<div id="status" style="border:1px solid #000; padding:10px; margin-top:10px;">
+    <aside class="panel">
+      <div class="hp-container" aria-hidden>
+        <div class="hp-bar" id="hpBar">10 / 10</div>
+      </div>
 
-    <!-- Barra de HP -->
-<div class="hp-container">
-    <div class="hp-bar" id="hpBar">10 / 10</div>
+      <h3 style="margin-top:0;margin-bottom:8px">Status do Jogador</h3>
+      <ul class="stat-list">
+        <li class="stat-item"><span class="name">Nome</span><span id="Nome" class="value">Jogador</span></li>
+        <li class="stat-item"><span class="name">Nível</span><span id="nivel" class="value">1</span></li>
+        <li class="stat-item"><span class="name">XP</span><span id="experiencia" class="value">0</span></li>
+        <li class="stat-item"><span class="name">Vitalidade</span><span id="vitalidade" class="value">10</span></li>
+        <li class="stat-item"><span class="name">Força</span><span id="forca" class="value">1</span></li>
+        <li class="stat-item"><span class="name">Agilidade</span><span id="agilidade" class="value">1</span></li>
+        <li class="stat-item"><span class="name">Inteligência</span><span id="inteligencia" class="value">1</span></li>
+      </ul>
+
+      <div id="levelUp" class="level-up" style="display:none;">
+        <h4 style="margin:0 0 8px 0">Parabéns! Você subiu de nível!</h4>
+        <p style="margin:0 0 10px 0;color:var(--muted)">Escolha um atributo para evoluir:</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="atributo" data-attr="vitalidade">Vitalidade</button>
+          <button class="atributo" data-attr="forca">Força</button>
+          <button class="atributo" data-attr="agilidade">Agilidade</button>
+          <button class="atributo" data-attr="inteligencia">Inteligência</button>
+        </div>
+      </div>
+    </aside>
   </div>
 
-    <h3>Status do Jogador</h3>
-    <p id="Nome">Nome:</p>
-    <p id="nivel">Nível: 1</p>
-    <p id="experiencia">XP: 0</p>
-    <p id="vitalidade">Vitalidade: 10</p>
-    <p id="forca">Força: 1</p>
-    <p id="agilidade">Agilidade: 1</p>
-    <p id="inteligencia">Inteligência: 1</p>
-</div>
+  <script>
+    // Pequena integração para o HP bar e log — manter compatibilidade com seu Main.js
+    const hpBar = document.getElementById('hpBar');
+    const log = document.getElementById('log');
 
-<!-- Aba de evolução (mantida do seu HTML) -->
-<div id="levelUp" style="display:none; border:1px solid #000; padding:10px; margin-top:10px;">
-    <h3>Parabens ! voce subiu de nivel !</h3>
-    <p>Escolha um atributo para evoluir:</p>
-    <button class="atributo" data-attr="vitalidade">Vitalidade</button>
-    <button class="atributo" data-attr="forca">Força</button>
-    <button class="atributo" data-attr="agilidade">Agilidade</button>
-    <button class="atributo" data-attr="inteligencia">Inteligência</button>
+    // Função utilitária: atualiza a largura do hpBar baseada em current/max
+    function atualizarHp(current, max){
+      const pct = Math.max(0, Math.min(100, Math.round((current / max) * 100)));
+      hpBar.style.width = pct + '%';
+      hpBar.textContent = current + ' / ' + max;
+      // altera cor conforme porcentagem
+      if(pct > 60) hpBar.style.background = 'linear-gradient(90deg,#16a34a,#22c55e)';
+      else if(pct > 30) hpBar.style.background = 'linear-gradient(90deg,#f59e0b,#f97316)';
+      else hpBar.style.background = 'linear-gradient(90deg,#ef4444,#dc2626)';
+    }
 
+    // Estado mínimo de exemplo (seu Main.js pode sobrescrever isso)
+    let estado = {
+      nome: 'Jogador',nivel:1,xp:0,vitalidade:10,forca:1,agilidade:1,inteligencia:1, hp:10, hpMax:10
+    }
+    // aplica estado inicial na UI
+    function aplicarEstado(){
+      document.getElementById('Nome').textContent = estado.nome;
+      document.getElementById('nivel').textContent = estado.nivel;
+      document.getElementById('experiencia').textContent = estado.xp;
+      document.getElementById('vitalidade').textContent = estado.vitalidade;
+      document.getElementById('forca').textContent = estado.forca;
+      document.getElementById('agilidade').textContent = estado.agilidade;
+      document.getElementById('inteligencia').textContent = estado.inteligencia;
+      atualizarHp(estado.hp, estado.hpMax);
+    }
+    aplicarEstado();
 
-</div>
- 
-    <script src="Main.js"></script>
+    // botões básicos
+    document.getElementById('exp').addEventListener('click', ()=>{
+      estado.xp += 10; log.textContent = 'Ganhou 10 XP!';
+      // subir de nivel exemplo aos 100 xp
+      if(estado.xp >= estado.nivel * 100){
+        estado.xp = 0; estado.nivel += 1; document.getElementById('levelUp').style.display = 'block';
+      }
+      aplicarEstado();
+    });
+
+    document.querySelectorAll('.atributo').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const attr = e.currentTarget.dataset.attr;
+        estado[attr] = (estado[attr]||0) + (attr === 'vitalidade' ? 5 : 1);
+        // se aumentou vitalidade atual, ajusta hp e hpMax
+        if(attr === 'vitalidade'){ estado.hpMax = estado.vitalidade; estado.hp = estado.hpMax; }
+        document.getElementById('levelUp').style.display = 'none';
+        log.textContent = `Você aumentou ${attr}!`;
+        aplicarEstado();
+      })
+    });
+
+    document.getElementById('save').addEventListener('click', ()=>{
+      localStorage.setItem('rpg_estado', JSON.stringify(estado)); log.textContent = 'Jogo salvo.';
+    })
+    document.getElementById('load').addEventListener('click', ()=>{
+      const s = localStorage.getItem('rpg_estado');
+      if(s){ estado = JSON.parse(s); log.textContent = 'Jogo carregado.'; aplicarEstado(); } else { log.textContent = 'Nenhum save encontrado.' }
+    })
+  </script>
 </body>
 </html>

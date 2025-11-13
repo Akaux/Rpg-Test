@@ -9,7 +9,9 @@ const jogador = {
     inteligencia: 1,
   },
 };
-const dificuldade = 2; // Medium Level 
+const dificuldade = 3; // Medium Level 
+
+
 
 // Elementos de status
 const statusVitalidade = document.getElementById("vitalidade");
@@ -20,7 +22,7 @@ const statusAgilidade = document.getElementById("agilidade");
 const statusInteligencia = document.getElementById("inteligencia");
 const Nome = document.getElementById("Nome");
 
-// Função para atualizar status
+
 function atualizarStatus() {
   Nome.textContent = `Nome: ${jogador.nome}`;
   statusVitalidade.textContent = `Vitalidade: ${jogador.atributos.vitalidade}`;
@@ -29,6 +31,12 @@ function atualizarStatus() {
   statusForca.textContent = `Força: ${jogador.atributos.forca}`;
   statusAgilidade.textContent = `Agilidade: ${jogador.atributos.agilidade}`;
   statusInteligencia.textContent = `Inteligência: ${jogador.atributos.inteligencia}`;
+
+  
+  // Atualiza barra de HP
+  const hpBar = document.getElementById("hpBar");
+  hpBar.textContent = `${jogador.atributos.vitalidade} / ${jogador.atributos.vitalidade}`;
+  hpBar.style.width = "100%"; // barra sempre cheia, verde
 }
 
 const expBtn = document.getElementById("exp"); // botão para ganhar xp
@@ -64,13 +72,9 @@ document.querySelectorAll(".atributo").forEach((btn) => {
   });
 });
 
-
-
 // ============= ATENÇÃO O SISTEMA ABAIXO FOI 100% I.A MAS COM CONCEITO FEITO POR MIM ========================
 
-/* === Save/Load UI via localStorage (sem arquivos) ===
-   Cole no final do Main.js ou rode no Console da página.
-*/
+/* === Save/Load UI via localStorage (sem arquivos) ===*/
 
 (function addLocalSaveUI(){
   const KEY = 'meu_save_jogador'; // chave usada no localStorage

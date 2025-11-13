@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPG - Mini Game</title>
+  <link rel="icon" type="image/x-icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTQkEfcSPRYoSsmzo_LHGcA72rG14C3cw1rw&s">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724;
+      --panel:#0b1220;
+      --accent:#8b5cf6;
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --success: linear-gradient(90deg,#16a34a,#22c55e);
+      --hp-border:rgba(255,255,255,0.08);
+    }
+
+    *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      min-height:100vh;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(139,92,246,0.08), transparent),
+                  radial-gradient(900px 400px at 90% 90%, rgba(59,130,246,0.03), transparent),
+                  var(--bg);
+      color:#e6eef8;
+      padding:32px;
+      display:flex;
+      align-items:stretch; /* important: stretch children to full height */
+      justify-content:center;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    
+    .container{max-width:1100px;display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:stretch; width:100%;}
+
+    .game, .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      padding:20px;border-radius:14px;
+      display:flex;flex-direction:column;gap:12px; /* allow internal layout */
+      min-height:200px; /* fallback */
+      transform:translateZ(0); /* reduce flicker */
+      backface-visibility:hidden;
+      overflow:hidden; /* prevent content overflow visual glitches */
+    }
+
+    .controls{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;color:white;transition:transform .12s ease;}
+    .btn:hover{transform:translateY(-3px);}
+
+    .hp-container{width:100%;height:28px;background:var(--glass);border-radius:8px;padding:3px;border:1px solid var(--hp-border);overflow:hidden;margin-bottom:12px;}
+    .hp-bar{height:100%;background: var(--success);width:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;transition:width .4s ease, background .2s ease;white-space:nowrap}
+
+    .stat-list{list-style:none;padding:0;display:grid;gap:6px;margin:0}
+    .stat-item{display:flex;justify-content:space-between;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);padding:6px 8px;border-radius:8px;}
+
+    .level-up{margin-top:14px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);}
+
+    input[type="text"]{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:white;outline:none;width:60%;}
+    input[type="text"]::placeholder{color:var(--muted);}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <main class="game" id="mainGame">
+      <header>
+        <h1 style="margin:0 0 8px 0">Bem-vindo(a) ao meu mini-game!</h1>
+        <p style="margin:0;color:var(--muted)">Treine para ganhar experiência e evoluir seus atributos.</p>
+      </header>
+      
+      <div class="controls">
+        <button id="exp" class="btn">Treinar</button>
+        <button id="save" class="btn">Salvar</button>
+        <button id="load" class="btn">Carregar</button>
+      </div>
+
+      <section style="margin-top:0;flex:1;display:flex;flex-direction:column;">
+        <h2 style="margin:0 0 8px 0;font-size:16px">Seu Nome</h2>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <input type="text" id="nomeInput" placeholder="Digite seu nome...">
+          <button id="enviarNome" class="btn">Enviar</button>
+        </div>
+
+        <h2 style="margin:0 0 8px 0;font-size:16px">Histórico</h2>
+        <div id="historyBox" style="border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);min-height:120px;overflow:auto;">
+          <p id="log" style="margin:0;color:var(--muted)">Nenhuma ação realizada ainda.</p>
+        </div>
+      </section>
+<footer style="margin-top:12px;color:var(--muted);font-size:13px"> Versão 3.2.0 By Akaux</footer>
+      <footer style="margin-top:12px;color:var(--muted);font-size:13px">Dica: clique em "Treinar" para ganhar XP. Ao subir de nível, escolha um atributo para evoluir.</footer>
+    </main>
+ 
+    <aside class="panel">
+      <div class="hp-container"><div class="hp-bar" id="hpBar">10 / 10</div></div>
+      <h3 style="margin-top:0;margin-bottom:8px">Status do Jogador</h3>
+      <ul class="stat-list">
+        <li class="stat-item"><span>Nome</span><span id="Nome">Jogador</span></li>
+        <li class="stat-item"><span>Nível</span><span id="nivel">1</span></li>
+        <li class="stat-item"><span>XP</span><span id="experiencia">0</span></li>
+        <li class="stat-item"><span>Vitalidade</span><span id="vitalidade">10</span></li>
+        <li class="stat-item"><span>Força</span><span id="forca">1</span></li>
+        <li class="stat-item"><span>Agilidade</span><span id="agilidade">1</span></li>
+        <li class="stat-item"><span>Inteligência</span><span id="inteligencia">1</span></li>
+      </ul>
+
+      <div id="levelUp" class="level-up" style="display:none;">
+        <h4 style="margin:0 0 8px 0">Parabéns! Você subiu de nível!</h4>
+        <p style="margin:0 0 10px 0;color:var(--muted)">Escolha um atributo para evoluir:</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn atributo" data-attr="vitalidade">Vitalidade</button>
+          <button class="btn atributo" data-attr="forca">Força</button>
+          <button class="btn atributo" data-attr="agilidade">Agilidade</button>
+          <button class="btn atributo" data-attr="inteligencia">Inteligência</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Segurança: evita divisão por zero e atualiza corretamente largura do hpBar
+    const hpBar = document.getElementById('hpBar');
+    const log = document.getElementById('log');
+    const nomeDisplay = document.getElementById('Nome');
+    const nomeInput = document.getElementById('nomeInput');
+    const enviarNome = document.getElementById('enviarNome');
+    const historyBox = document.getElementById('historyBox');
+
+    let estado = {nome:'Jogador',nivel:1,xp:0,vitalidade:10,forca:1,agilidade:1,inteligencia:1,hp:10,hpMax:10};
+
+    function atualizarHp(current, max){
+      const safeMax = (typeof max === 'number' && max > 0) ? max : 1;
+      const pct = Math.max(0, Math.min(100, Math.round((current / safeMax) * 100)));
+      hpBar.style.width = pct + '%';
+      hpBar.textContent = current + ' / ' + max;
+      if(pct > 60) hpBar.style.background = 'linear-gradient(90deg,#16a34a,#22c55e)';
+      else if(pct > 30) hpBar.style.background = 'linear-gradient(90deg,#f59e0b,#f97316)';
+      else hpBar.style.background = 'linear-gradient(90deg,#ef4444,#dc2626)';
+    }
+
+    function aplicarEstado(){
+      nomeDisplay.textContent = estado.nome || 'Jogador';
+      document.getElementById('nivel').textContent = estado.nivel;
+      document.getElementById('experiencia').textContent = estado.xp;
+      document.getElementById('vitalidade').textContent = estado.vitalidade;
+      document.getElementById('forca').textContent = estado.forca;
+      document.getElementById('agilidade').textContent = estado.agilidade;
+      document.getElementById('inteligencia').textContent = estado.inteligencia;
+      atualizarHp(estado.hp, estado.hpMax);
+    }
+
+    // adiciona entradas ao histórico em vez de sobrescrever
+    function pushLog(text){
+      const p = document.createElement('p');
+      p.textContent = text;
+      p.style.margin = '6px 0';
+      p.style.color = 'var(--muted)';
+      historyBox.appendChild(p);
+      // manter scroll no final
+      historyBox.scrollTop = historyBox.scrollHeight;
+    }
+
+    enviarNome.addEventListener('click', ()=>{
+      const nome = nomeInput.value.trim();
+      if(nome){
+        estado.nome = nome;
+        nomeDisplay.textContent = nome;
+        pushLog(`Nome definido como ${nome}.`);
+        nomeInput.value = '';
+      }
+    });
+
+    document.getElementById('exp').addEventListener('click', ()=>{
+      estado.xp += 10;
+      pushLog('Ganhou 10 XP!');
+      if(estado.xp >= estado.nivel * 100){
+        estado.xp = 0; estado.nivel += 1; document.getElementById('levelUp').style.display = 'block';
+        pushLog(`Subiu para o nível ${estado.nivel}! Escolha um atributo.`);
+      }
+      aplicarEstado();
+    });
+
+    document.querySelectorAll('.atributo').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const attr = e.currentTarget.dataset.attr;
+        estado[attr] = (estado[attr]||0) + (attr === 'vitalidade' ? 5 : 1);
+        if(attr === 'vitalidade'){ estado.hpMax = estado.vitalidade; estado.hp = estado.hpMax; }
+        document.getElementById('levelUp').style.display = 'none';
+        pushLog(`Você aumentou ${attr}!`);
+        aplicarEstado();
+      })
+    });
+
+    document.getElementById('save').addEventListener('click', ()=>{
+      localStorage.setItem('rpg_estado', JSON.stringify(estado)); pushLog('Jogo salvo.');
+    })
+    document.getElementById('load').addEventListener('click', ()=>{
+      const s = localStorage.getItem('rpg_estado');
+      if(s){ estado = JSON.parse(s); pushLog('Jogo carregado.'); aplicarEstado(); } else { pushLog('Nenhum save encontrado.'); }
+    })
+
+    // aplicar estado inicial
+    aplicarEstado();
+  </script>
+</body>
+</html>
